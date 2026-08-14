@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get the document</title>
+<style>
+  :root{
+    --ink: #1c2430;
+    --ink-soft: #4a5568;
+    --paper: #f7f5f0;
+    --paper-card: #ffffff;
+    --rule: #dcd6c9;
+    --accent: #8a3324;
+    --accent-soft: #f1e3dd;
+    --ok: #2f6b3f;
+  }
+  *{ box-sizing: border-box; }
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    background: var(--paper);
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px);
+    background-size: 100% 32px;
+    font-family: "Iowan Old Style","Palatino Linotype", Georgia, serif;
+    color: var(--ink);
+  }
+  .wrap{
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+  .eyebrow{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 11.5px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  h1{
+    font-size: 34px;
+    line-height: 1.15;
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .sub{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink-soft);
+    font-size: 15px;
+    margin: 0 0 34px;
+  }
+
+  .status-card{
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 22px 24px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    box-shadow: 0 1px 0 rgba(28,36,48,0.03);
+  }
+  .status-icon{
+    flex: 0 0 auto;
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--accent-soft);
+  }
+  .status-icon svg{ width:20px; height:20px; }
+  .status-text{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    flex: 1 1 auto;
+  }
+  .status-title{ font-weight:600; font-size:15px; margin:0 0 2px; }
+  .status-detail{ font-size: 13px; color: var(--ink-soft); margin:0; }
+  .status-detail.ok{ color: var(--ok); }
+  .status-detail.err{ color: var(--accent); }
+
+  .dl-again{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    flex: 0 0 auto;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 3px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .dl-again:hover{ background: var(--accent); }
+  .dl-again:active{ transform: translateY(1px); }
+  .dl-again:disabled{ opacity: 0.4; cursor: not-allowed; }
+
+  .file-line{
+    margin-top: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    display:flex; align-items:center; gap: 6px;
+  }
+  .file-line .dot{ width:5px; height:5px; border-radius:50%; background:#b7ae98; }
+
+  .preview-label{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    margin: 44px 0 14px;
+  }
+  .page{
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 48px 56px;
+    min-height: 240px;
+    box-shadow: 0 2px 10px rgba(28,36,48,0.05);
+  }
+  .page h1, .page h2, .page h3{ font-family: inherit; }
+  .page p{ line-height: 1.7; }
+  .page table{ border-collapse: collapse; width: 100%; margin: 12px 0; }
+  .page td, .page th{ border: 1px solid var(--rule); padding: 6px 10px; font-size: 14px; }
+
+  .filecard{
+    text-align: center;
+    padding: 30px 20px 10px;
+  }
+  .filecard-icon{
+    width: 56px; height: 56px;
+    margin: 0 auto 18px;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .filecard-icon svg{ width: 26px; height: 26px; }
+  .filecard-name{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  .filecard-meta{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+  }
+  .filecard-note{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+  .placeholder{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink-soft);
+    font-size: 14px;
+    text-align: center;
+    padding: 60px 0;
+  }
+  .spinner{
+    width: 16px; height:16px;
+    border: 2px solid var(--rule);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    display:inline-block;
+    animation: spin 0.7s linear infinite;
+    vertical-align: -3px;
+    margin-right: 8px;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  @media (max-width: 560px){
+    .wrap{ padding: 40px 16px 60px; }
+    h1{ font-size: 26px; }
+    .status-card{ flex-wrap: wrap; }
+    .dl-again{ width: 100%; }
+    .page{ padding: 32px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">Document delivery</div>
+  <h1 id="pageTitle">Your document is on its way</h1>
+  <p class="sub">The file starts downloading automatically. Once it's done, you can look it over below or grab it again.</p>
+
+  <div class="status-card">
+    <div class="status-icon" id="statusIcon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#8a3324" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>
+    </div>
+    <div class="status-text">
+      <p class="status-title" id="statusTitle">Preparing download&hellip;</p>
+      <p class="status-detail" id="statusDetail"><span class="spinner"></span>Fetching the file</p>
+    </div>
+    <button class="dl-again" id="dlBtn" disabled>Download again</button>
+  </div>
+  <div class="file-line">
+    <span id="fileName">document.docx</span><span class="dot"></span><span id="fileSize">&mdash;</span>
+  </div>
+
+  <div class="preview-label">File details</div>
+  <div class="page" id="preview">
+    <div class="placeholder"><span class="spinner"></span>Loading&hellip;</div>
+  </div>
+</div>
+
+<script>
+  // ---- Configuration: change this to point at your file ----
+  const FILE_URL = "document.doc";
+  const FILE_DISPLAY_NAME = "document.doc";
+  // ------------------------------------------------------------
+
+  const statusTitle = document.getElementById('statusTitle');
+  const statusDetail = document.getElementById('statusDetail');
+  const statusIcon = document.getElementById('statusIcon');
+  const dlBtn = document.getElementById('dlBtn');
+  const fileName = document.getElementById('fileName');
+  const fileSize = document.getElementById('fileSize');
+  const preview = document.getElementById('preview');
+
+  fileName.textContent = FILE_DISPLAY_NAME;
+
+  function formatBytes(bytes){
+    if(!bytes) return '—';
+    const kb = bytes / 1024;
+    if(kb < 1024) return kb.toFixed(0) + ' KB';
+    return (kb/1024).toFixed(1) + ' MB';
+  }
+
+  function triggerDownload(blob, name){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+
+  let cachedBlob = null;
+
+  async function init(){
+    try{
+      const res = await fetch(FILE_URL);
+      if(!res.ok) throw new Error('File not found (' + res.status + ')');
+      const arrayBuffer = await res.arrayBuffer();
+      cachedBlob = new Blob([arrayBuffer], { type: 'application/msword' });
+
+      fileSize.textContent = formatBytes(arrayBuffer.byteLength);
+
+      // Auto-download immediately
+      triggerDownload(cachedBlob, FILE_DISPLAY_NAME);
+
+      statusTitle.textContent = 'Download started';
+      statusDetail.textContent = 'Check your downloads folder';
+      statusDetail.classList.add('ok');
+      statusIcon.querySelector('svg').setAttribute('stroke', '#2f6b3f');
+      dlBtn.disabled = false;
+
+      // Legacy .doc files can't be parsed in-browser — show a generic file card instead
+      preview.innerHTML = `
+        <div class="filecard">
+          <div class="filecard-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#8a3324" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+          </div>
+          <div class="filecard-name">${FILE_DISPLAY_NAME}</div>
+          <div class="filecard-meta">Word 97&ndash;2003 Document &middot; ${formatBytes(arrayBuffer.byteLength)}</div>
+          <div class="filecard-note">This older .doc format can't be previewed in the browser. Use the button above to download and open it in Word.</div>
+        </div>
+      `;
+
+    }catch(err){
+      statusTitle.textContent = 'Couldn\'t download the file';
+      statusDetail.textContent = err.message;
+      statusDetail.classList.add('err');
+      preview.innerHTML = '<div class="placeholder">Preview unavailable &mdash; ' + err.message + '</div>';
+    }
+  }
+
+  dlBtn.addEventListener('click', () => {
+    if(cachedBlob) triggerDownload(cachedBlob, FILE_DISPLAY_NAME);
+  });
+
+  init();
+</script>
+
+</body>
+</html>
