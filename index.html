@@ -217,18 +217,9 @@
 
 <script>
   // ---- Configuration: change this to point at your file ----
-  // Works with either a .doc or .docx file — just set the filename below.
-  const FILE_URL = "document.docx";
-  const FILE_DISPLAY_NAME = "document.docx";
+  const FILE_URL = "document.doc";
+  const FILE_DISPLAY_NAME = "document.doc";
   // ------------------------------------------------------------
-
-  // Pick the correct MIME type and icon label based on the file extension
-  const ext = FILE_DISPLAY_NAME.split('.').pop().toLowerCase();
-  const FILE_TYPES = {
-    doc:  { mime: 'application/msword', label: 'Word 97–2003 Document (.doc)' },
-    docx: { mime: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', label: 'Word Document (.docx)' }
-  };
-  const fileType = FILE_TYPES[ext] || { mime: 'application/octet-stream', label: ext.toUpperCase() + ' File' };
 
   const statusTitle = document.getElementById('statusTitle');
   const statusDetail = document.getElementById('statusDetail');
@@ -265,7 +256,7 @@
       const res = await fetch(FILE_URL);
       if(!res.ok) throw new Error('File not found (' + res.status + ')');
       const arrayBuffer = await res.arrayBuffer();
-      cachedBlob = new Blob([arrayBuffer], { type: fileType.mime });
+      cachedBlob = new Blob([arrayBuffer], { type: 'application/msword' });
 
       fileSize.textContent = formatBytes(arrayBuffer.byteLength);
 
@@ -278,14 +269,15 @@
       statusIcon.querySelector('svg').setAttribute('stroke', '#2f6b3f');
       dlBtn.disabled = false;
 
-      // Show a simple file card (no in-browser document preview)
+      // Legacy .doc files can't be parsed in-browser — show a generic file card instead
       preview.innerHTML = `
         <div class="filecard">
           <div class="filecard-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="#8a3324" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
           </div>
           <div class="filecard-name">${FILE_DISPLAY_NAME}</div>
-          <div class="filecard-meta">${fileType.label} &middot; ${formatBytes(arrayBuffer.byteLength)}</div>
+          <div class="filecard-meta">Word 97&ndash;2003 Document &middot; ${formatBytes(arrayBuffer.byteLength)}</div>
+          <div class="filecard-note">This older .doc format can't be previewed in the browser. Use the button above to download and open it in Word.</div>
         </div>
       `;
 
